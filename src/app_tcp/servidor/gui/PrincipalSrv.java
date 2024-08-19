@@ -20,10 +20,7 @@ public class PrincipalSrv extends javax.swing.JFrame {
 
     private final int PORT = 12345;
     private ServerSocket serverSocket;
-    private Socket clientSocket;
-    private BufferedReader in;
     private PrintWriter out;
-    private String nombreCliente;
     private List<AtencionCliente> clientesConectados = new ArrayList<>();
 
     /**
@@ -145,10 +142,13 @@ public class PrincipalSrv extends javax.swing.JFrame {
 
                     while (true) {
                         Socket clientSocket = serverSocket.accept();
-                        mensajesTxt.append("Nuevo cliente conectado: " + clientSocket.getInetAddress() + "\n");
+                        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                        out = new PrintWriter(clientSocket.getOutputStream(), true);
+                        String nombreCliente = in.readLine().substring(1);
+                        mensajesTxt.append("Nuevo cliente conectado: Nombre: " + nombreCliente + " - puerto: " + clientSocket.getInetAddress() + "\n");
 
                         // Crear una nueva instancia de AtencionCliente para cada cliente
-                        AtencionCliente atencionCliente = new AtencionCliente(clientSocket, mensajesTxt, clientesConectados);
+                        AtencionCliente atencionCliente = new AtencionCliente(nombreCliente, clientSocket, mensajesTxt, clientesConectados);
                         synchronized (clientesConectados) {
                             clientesConectados.add(atencionCliente);
                         }
@@ -160,16 +160,10 @@ public class PrincipalSrv extends javax.swing.JFrame {
             }
         }).start();
     }
+    
 
-    public void enviarATodos(String mensaje, AtencionCliente remitente) {
-        synchronized (clientesConectados) {
-            for (AtencionCliente cliente : clientesConectados) {
-                if (cliente != remitente) {
-                    cliente.enviarMensaje(mensaje);
-                }
-            }
-        }
-    }
+
+   
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

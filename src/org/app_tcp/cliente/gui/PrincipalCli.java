@@ -1,14 +1,10 @@
 package org.app_tcp.cliente.gui;
 
-import app_tcp.servidor.gui.AtencionCliente;
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -19,11 +15,12 @@ import javax.swing.UIManager;
  * @author stivenrodriguez
  */
 public class PrincipalCli extends javax.swing.JFrame {
+
     private final int PORT = 12345;
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
-    private String  nombreCliente;
+    private String nombreCliente;
 
     /**
      * Creates new form PrincipalCli
@@ -42,6 +39,11 @@ public class PrincipalCli extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jComboBox2 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         btnConectar = new javax.swing.JButton();
         btnDesconectar = new javax.swing.JButton();
@@ -51,6 +53,23 @@ public class PrincipalCli extends javax.swing.JFrame {
         txtMensaje = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         btnEnviarMensaje = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        cmbCliente = new javax.swing.JComboBox<>();
+        btnEnviarACliente = new javax.swing.JButton();
+
+        jCheckBoxMenuItem1.setSelected(true);
+        jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
+
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(jList1);
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -78,10 +97,21 @@ public class PrincipalCli extends javax.swing.JFrame {
 
         jLabel2.setText("Mensaje:");
 
-        btnEnviarMensaje.setText("Enviar");
+        btnEnviarMensaje.setText("Enviar a todos");
         btnEnviarMensaje.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEnviarMensajeActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("Cliente:");
+
+        cmbCliente.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        btnEnviarACliente.setText("Enviar a cliente");
+        btnEnviarACliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnviarAClienteActionPerformed(evt);
             }
         });
 
@@ -89,34 +119,39 @@ public class PrincipalCli extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(399, Short.MAX_VALUE)
-                        .addComponent(btnEnviarMensaje))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(187, 187, 187)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(149, 149, 149)
+                        .addComponent(btnConectar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(149, 149, 149)
+                        .addComponent(btnDesconectar, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(86, 86, 86)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jLabel3)
+                        .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(btnEnviarACliente)
+                            .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnEnviarMensaje)
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtMensaje)))))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(70, 70, 70))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnConectar)
-                            .addComponent(btnDesconectar, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(129, 129, 129))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(172, 172, 172))))
+                                .addGap(6, 6, 6)
+                                .addComponent(txtMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -125,19 +160,27 @@ public class PrincipalCli extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(btnConectar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
                 .addComponent(btnDesconectar)
                 .addGap(12, 12, 12)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel2))
+                    .addComponent(txtMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(12, 12, 12)
                 .addComponent(btnEnviarMensaje)
+                .addGap(32, 32, 32)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(btnEnviarACliente)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(9, 9, 9))
         );
 
         pack();
@@ -160,8 +203,13 @@ public class PrincipalCli extends javax.swing.JFrame {
 
     private void btnEnviarMensajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarMensajeActionPerformed
         // TODO add your handling code here:
-        this.enviarMensaje();
+        this.enviarMensajeATodos();
     }//GEN-LAST:event_btnEnviarMensajeActionPerformed
+
+    private void btnEnviarAClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarAClienteActionPerformed
+        // TODO add your handling code here:
+        this.enviarMensajeACliente();
+    }//GEN-LAST:event_btnEnviarAClienteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -173,7 +221,7 @@ public class PrincipalCli extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-             // Establecer el Look and Feel de macOS
+            // Establecer el Look and Feel de macOS
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(PrincipalCli.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -193,8 +241,9 @@ public class PrincipalCli extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private void pedirNombreCliente() {
+        cmbCliente.removeAllItems(); // Limpiar el comboBox
         nombreCliente = JOptionPane.showInputDialog(this, "Ingrese su nombre:", "Bienvenido", JOptionPane.PLAIN_MESSAGE);
 
         if (nombreCliente == null || nombreCliente.trim().isEmpty()) {
@@ -203,76 +252,140 @@ public class PrincipalCli extends javax.swing.JFrame {
 
         mensajesTxt.append("Bienvenido, " + nombreCliente + "!\n");
     }
-   
-   
+
     public void cerrarSesion() {
-      try {
-          if (socket != null && !socket.isClosed()) {
-              String mensaje = nombreCliente + " se desconecto";
-              out.println(mensaje);
-              socket.close();
-              mensajesTxt.append("Cliente desconectado: " + socket.getInetAddress().getHostAddress() + "\n");
-          }
-      } catch (IOException e) {
-          mensajesTxt.append("Error al cerrar la sesión del cliente: " + e.getMessage() + "\n");
-          e.printStackTrace();
-      }
+        try {
+            if (socket != null && !socket.isClosed()) {
+                String mensaje = nombreCliente + " se desconecto";
+                out.println(mensaje);
+                socket.close();
+                mensajesTxt.append("Cliente desconectado: " + socket.getInetAddress().getHostAddress() + "\n");
+            }
+        } catch (IOException e) {
+            mensajesTxt.append("Error al cerrar la sesión del cliente: " + e.getMessage() + "\n");
+            e.printStackTrace();
+        }
     }
 
-    
-private void conectar() {
-    JOptionPane.showMessageDialog(this, "Conectando con servidor");
-    try {
-        if (socket == null || socket.isClosed()) {
-            socket = new Socket("localhost", PORT); // Conecta al servidor en localhost y puerto PORT
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        }
+    private void conectar() {
+        JOptionPane.showMessageDialog(this, "Conectando con servidor");
+        try {
+            if (socket == null || socket.isClosed()) {
+                socket = new Socket("localhost", PORT); // Conecta al servidor en localhost y puerto PORT
+                out = new PrintWriter(socket.getOutputStream(), true);
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                // Enviar nombre del cliente al servidor
+                out.println("@" + nombreCliente);
+                // Solicitar la lista de los clientes activos
+                this.solicitarClientes();
+            }
 
-        // Iniciar un hilo para leer los mensajes del servidor
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    String fromServer;
-                    while ((fromServer = in.readLine()) != null) {
-                        // Mostrar mensajes recibidos del servidor
-                        mensajesTxt.append(fromServer + "\n"); 
-                    }
-                } catch (IOException ex) {
-                    mensajesTxt.append("Error en la conexión con el servidor: " + ex.getMessage() + "\n");
-                } finally {
+            // Iniciar un hilo para leer los mensajes del servidor
+            new Thread(new Runnable() {
+                public void run() {
                     try {
-                        if (socket != null && !socket.isClosed()) {
-                            socket.close();
+                        String fromServer;
+                        while ((fromServer = in.readLine()) != null) {
+                           
+                            // Procesar la lista de clientes
+                            if (fromServer.startsWith("Lista de clientes:")) {
+                                 actualizarComboBoxClientes(fromServer);
+                            }else {
+                                if(!fromServer.contains("enviar clientes activos")){
+                                    // Mostrar mensajes recibidos del servidor
+                                    mensajesTxt.append(fromServer + "\n");
+                                }   
+                            }
                         }
-                    } catch (IOException e) {
-                        mensajesTxt.append("Error al cerrar el socket: " + e.getMessage() + "\n");
+                    } catch (IOException ex) {
+                        mensajesTxt.append("Error en la conexión con el servidor: " + ex.getMessage() + "\n");
+                    } finally {
+                        try {
+                            if (socket != null && !socket.isClosed()) {
+                                socket.close();
+                            }
+                        } catch (IOException e) {
+                            mensajesTxt.append("Error al cerrar el socket: " + e.getMessage() + "\n");
+                        }
                     }
                 }
-            }
-        }).start();
+            }).start();
 
-    } catch (IOException e) {
-        mensajesTxt.append("Error al conectar con el servidor: " + e.getMessage() + "\n");
-        e.printStackTrace();
+        } catch (IOException e) {
+            mensajesTxt.append("Error al conectar con el servidor: " + e.getMessage() + "\n");
+            e.printStackTrace();
+        }
     }
-}
-
     
-    private void enviarMensaje() {
-        String mensaje = nombreCliente + " --- Mensaje: " + txtMensaje.getText();
-        mensajesTxt.append(mensaje + "\n");
+    private void solicitarClientes(){
+         out.println("enviar clientes activos");
+    }
+    
+    private void enviarMensajeACliente(){
+        String clienteSeleccionado = "";
+        if(cmbCliente.getSelectedItem() == null){
+            JOptionPane.showMessageDialog(this, "No hay clientes conectados por el momento!!");
+            return;
+        }
+        
+        clienteSeleccionado = cmbCliente.getSelectedItem().toString();
+        
+        if(clienteSeleccionado.equals("Seleccionar cliente") || cmbCliente.getSelectedItem() == null){
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente");
+            return;
+        }
+        
+        String mensaje = txtMensaje.getText().trim();
+
+        if (!clienteSeleccionado.isEmpty()) {
+            mensaje = "@" + clienteSeleccionado + ": " + mensaje;
+        } 
+
         out.println(mensaje);
         txtMensaje.setText("");
+    }
+
+    private void enviarMensajeATodos() {
+        String mensaje = txtMensaje.getText().trim();
+
+        if(mensaje.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Debe escribir un mensaje");
+            return;
+        }
+        
+        out.println(mensaje);
+        txtMensaje.setText("");
+    }
+    
+    private void actualizarComboBoxClientes(String listaClientes) {
+        String[] clientes = listaClientes.split(":");
+        cmbCliente.removeAllItems();
+        if(listaClientes != "Lista de clientes"){
+            cmbCliente.addItem("Seleccionar cliente");
+        }
+        
+        for (String cliente : clientes) {
+            if (!cliente.trim().isEmpty() && !cliente.equals("Lista de clientes") && !cliente.equals(this.nombreCliente)) {
+                cmbCliente.addItem(cliente.trim());
+            }
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConectar;
     private javax.swing.JButton btnDesconectar;
+    private javax.swing.JButton btnEnviarACliente;
     private javax.swing.JButton btnEnviarMensaje;
+    private javax.swing.JComboBox<String> cmbCliente;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JList<String> jList1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea mensajesTxt;
     private javax.swing.JTextField txtMensaje;

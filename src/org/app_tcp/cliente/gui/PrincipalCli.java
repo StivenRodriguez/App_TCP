@@ -1,12 +1,16 @@
 package org.app_tcp.cliente.gui;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -21,6 +25,7 @@ public class PrincipalCli extends javax.swing.JFrame {
     private PrintWriter out;
     private BufferedReader in;
     private String nombreCliente;
+    private File archivoSeleccionado;
 
     /**
      * Creates new form PrincipalCli
@@ -44,6 +49,8 @@ public class PrincipalCli extends javax.swing.JFrame {
         jList1 = new javax.swing.JList<>();
         jComboBox1 = new javax.swing.JComboBox<>();
         jComboBox2 = new javax.swing.JComboBox<>();
+        jDialog1 = new javax.swing.JDialog();
+        jDialog2 = new javax.swing.JDialog();
         jLabel1 = new javax.swing.JLabel();
         btnConectar = new javax.swing.JButton();
         btnDesconectar = new javax.swing.JButton();
@@ -56,6 +63,10 @@ public class PrincipalCli extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         cmbCliente = new javax.swing.JComboBox<>();
         btnEnviarACliente = new javax.swing.JButton();
+        txtNombreArchivo = new javax.swing.JTextField();
+        btnSeleccionarArchivo = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        btnEnviarArchivo = new javax.swing.JButton();
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
@@ -70,6 +81,28 @@ public class PrincipalCli extends javax.swing.JFrame {
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jDialog2Layout = new javax.swing.GroupLayout(jDialog2.getContentPane());
+        jDialog2.getContentPane().setLayout(jDialog2Layout);
+        jDialog2Layout.setHorizontalGroup(
+            jDialog2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jDialog2Layout.setVerticalGroup(
+            jDialog2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -115,6 +148,24 @@ public class PrincipalCli extends javax.swing.JFrame {
             }
         });
 
+        txtNombreArchivo.setEditable(false);
+
+        btnSeleccionarArchivo.setText("Seleccionar archivo");
+        btnSeleccionarArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSeleccionarArchivoActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Nombre archivo:");
+
+        btnEnviarArchivo.setText("Enviar archivo");
+        btnEnviarArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEnviarArchivoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -131,26 +182,36 @@ public class PrincipalCli extends javax.swing.JFrame {
                         .addGap(149, 149, 149)
                         .addComponent(btnDesconectar, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(86, 86, 86)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
+                        .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel3)
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnEnviarACliente)
-                            .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnEnviarMensaje)
+                        .addGap(12, 12, 12)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
-                                .addGap(6, 6, 6)
-                                .addComponent(txtMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtMensaje))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(btnEnviarACliente)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnEnviarMensaje))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel4)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(txtNombreArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(0, 0, Short.MAX_VALUE))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(btnSeleccionarArchivo)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(btnEnviarArchivo))))
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 448, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -162,25 +223,31 @@ public class PrincipalCli extends javax.swing.JFrame {
                 .addComponent(btnConectar)
                 .addGap(12, 12, 12)
                 .addComponent(btnDesconectar)
-                .addGap(12, 12, 12)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(6, 6, 6)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(3, 3, 3)
-                        .addComponent(jLabel2))
-                    .addComponent(txtMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addComponent(btnEnviarMensaje)
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(btnEnviarACliente)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 3, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEnviarMensaje)
+                    .addComponent(btnEnviarACliente))
+                .addGap(32, 32, 32)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtNombreArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSeleccionarArchivo)
+                    .addComponent(btnEnviarArchivo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -210,6 +277,16 @@ public class PrincipalCli extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.enviarMensajeACliente();
     }//GEN-LAST:event_btnEnviarAClienteActionPerformed
+
+    private void btnSeleccionarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarArchivoActionPerformed
+        // TODO add your handling code here:
+        this.seleccionarArchivo();
+    }//GEN-LAST:event_btnSeleccionarArchivoActionPerformed
+
+    private void btnEnviarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarArchivoActionPerformed
+        // TODO add your handling code here:
+        this.enviarArchivoACliente();
+    }//GEN-LAST:event_btnEnviarArchivoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -259,6 +336,7 @@ public class PrincipalCli extends javax.swing.JFrame {
                 String mensaje = nombreCliente + " se desconecto";
                 out.println(mensaje);
                 socket.close();
+                
                 mensajesTxt.append("Cliente desconectado: " + socket.getInetAddress().getHostAddress() + "\n");
             }
         } catch (IOException e) {
@@ -286,15 +364,15 @@ public class PrincipalCli extends javax.swing.JFrame {
                     try {
                         String fromServer;
                         while ((fromServer = in.readLine()) != null) {
-                           
+
                             // Procesar la lista de clientes
                             if (fromServer.startsWith("Lista de clientes:")) {
-                                 actualizarComboBoxClientes(fromServer);
-                            }else {
-                                if(!fromServer.contains("enviar clientes activos")){
+                                actualizarComboBoxClientes(fromServer);
+                            } else {
+                                if (!fromServer.contains("enviar clientes activos")) {
                                     // Mostrar mensajes recibidos del servidor
                                     mensajesTxt.append(fromServer + "\n");
-                                }   
+                                }
                             }
                         }
                     } catch (IOException ex) {
@@ -316,30 +394,35 @@ public class PrincipalCli extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
-    private void solicitarClientes(){
-         out.println("enviar clientes activos");
+
+    private void solicitarClientes() {
+        out.println("enviar clientes activos");
     }
-    
-    private void enviarMensajeACliente(){
-        String clienteSeleccionado = "";
-        if(cmbCliente.getSelectedItem() == null){
+
+    public boolean validarClientes() {
+        if (cmbCliente.getSelectedItem() == null) {
             JOptionPane.showMessageDialog(this, "No hay clientes conectados por el momento!!");
-            return;
+            return false;
         }
-        
-        clienteSeleccionado = cmbCliente.getSelectedItem().toString();
-        
-        if(clienteSeleccionado.equals("Seleccionar cliente") || cmbCliente.getSelectedItem() == null){
-            JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente");
-            return;
+        return true;
+    }
+
+    private void enviarMensajeACliente() {
+        String clienteSeleccionado = "";
+        if (validarClientes()) {
+            clienteSeleccionado = cmbCliente.getSelectedItem().toString();
+
+            if (clienteSeleccionado.equals("Seleccionar cliente") || cmbCliente.getSelectedItem() == null) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente");
+                return;
+            }
         }
-        
+
         String mensaje = txtMensaje.getText().trim();
 
         if (!clienteSeleccionado.isEmpty()) {
             mensaje = "@" + clienteSeleccionado + ": " + mensaje;
-        } 
+        }
 
         out.println(mensaje);
         txtMensaje.setText("");
@@ -348,22 +431,22 @@ public class PrincipalCli extends javax.swing.JFrame {
     private void enviarMensajeATodos() {
         String mensaje = txtMensaje.getText().trim();
 
-        if(mensaje.isEmpty()){
+        if (mensaje.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debe escribir un mensaje");
             return;
         }
-        
+
         out.println(mensaje);
         txtMensaje.setText("");
     }
-    
+
     private void actualizarComboBoxClientes(String listaClientes) {
         String[] clientes = listaClientes.split(":");
         cmbCliente.removeAllItems();
-        if(listaClientes != "Lista de clientes"){
+        if (listaClientes != "Lista de clientes") {
             cmbCliente.addItem("Seleccionar cliente");
         }
-        
+
         for (String cliente : clientes) {
             if (!cliente.trim().isEmpty() && !cliente.equals("Lista de clientes") && !cliente.equals(this.nombreCliente)) {
                 cmbCliente.addItem(cliente.trim());
@@ -371,23 +454,82 @@ public class PrincipalCli extends javax.swing.JFrame {
         }
     }
 
+    public void seleccionarArchivo() {
+        JFileChooser fileChooser = new JFileChooser();
+        int opcion = fileChooser.showOpenDialog(null);
+        if (opcion == JFileChooser.APPROVE_OPTION) {
+            this.archivoSeleccionado = fileChooser.getSelectedFile();
+            String nombreArchivo = this.archivoSeleccionado.getName();
+
+            if (nombreArchivo.endsWith(".doto")) {
+                txtNombreArchivo.setText(nombreArchivo);
+            } else {
+                JOptionPane.showMessageDialog(null, "Solo se permiten archivos con extensión .doto", "Archivo no válido", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public void enviarArchivoACliente() {
+        String clienteSeleccionado = "";
+        if (validarClientes()) {
+            clienteSeleccionado = cmbCliente.getSelectedItem().toString();
+
+            if (clienteSeleccionado.equals("Seleccionar cliente") || cmbCliente.getSelectedItem() == null) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar un cliente");
+                return;
+            }
+        }
+        if (archivoSeleccionado != null && archivoSeleccionado.getName().endsWith(".doto")) {
+            try {
+                // Enviar comando para indicar que se va a enviar un archivo
+                out.println("$file:" + archivoSeleccionado.getName()+ "@" + clienteSeleccionado);
+
+                // Leer y enviar el contenido del archivo
+                FileInputStream fileInputStream = new FileInputStream(archivoSeleccionado);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(socket.getOutputStream());
+
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+                    bufferedOutputStream.write(buffer, 0, bytesRead);
+                }
+
+                bufferedOutputStream.flush();
+                fileInputStream.close();
+                txtNombreArchivo.setText("");
+                archivoSeleccionado = null;
+
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error al enviar el archivo: " + e.getMessage());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un archivo con la extensión .doto");
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConectar;
     private javax.swing.JButton btnDesconectar;
     private javax.swing.JButton btnEnviarACliente;
+    private javax.swing.JButton btnEnviarArchivo;
     private javax.swing.JButton btnEnviarMensaje;
+    private javax.swing.JButton btnSeleccionarArchivo;
     private javax.swing.JComboBox<String> cmbCliente;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JDialog jDialog1;
+    private javax.swing.JDialog jDialog2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JList<String> jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea mensajesTxt;
     private javax.swing.JTextField txtMensaje;
+    private javax.swing.JTextField txtNombreArchivo;
     // End of variables declaration//GEN-END:variables
 }

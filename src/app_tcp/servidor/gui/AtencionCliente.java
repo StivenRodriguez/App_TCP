@@ -1,11 +1,16 @@
 package app_tcp.servidor.gui;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 /**
@@ -51,14 +56,24 @@ public class AtencionCliente extends Thread {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             String linea;
             while ((linea = in.readLine()) != null) {
-                if(linea.equals("enviar clientes activos")){
-                    //Solcitar clientes activos
-                    enviarListaClientesATodos();
+
+                if (linea.equals("enviar clientes activos")) {
+                    // Solicitar clientes activos
+                    this.enviarListaClientesATodos();
                 }
-                
+
+//                if (linea.contains("desconecto")) {
+//                     Actualizar la lista con el cliente eliminado
+//                    this.cerrarSesion(linea);
+//                }
+
                 mensajesTxt.append("Cliente: " + this.nombreCliente + "\n");
                 System.out.println("Mensaje: " + linea + "\n");
-                procesarMensaje(linea);
+                //Ejercicio dos
+                //this.procesarMensaje(linea);
+
+                //Ejercicio Tres
+                procesarMensajeDeArchivo(linea);
             }
         } catch (IOException ex) {
             mensajesTxt.append("Error al comunicar con el cliente: " + ex.getMessage() + "\n");
@@ -75,7 +90,18 @@ public class AtencionCliente extends Thread {
             }
         }
     }
-    
+
+    private void cerrarSesion(String mensaje) {
+        String nombreCliente = mensaje.substring(mensaje.indexOf(":") + 1).trim();
+        AtencionCliente cliente = buscarClientePorNombre(nombreCliente);
+        
+        synchronized (listaClientes) {
+            listaClientes.remove(cliente);
+        }
+        this.enviarListaClientesATodos();
+        mensajesTxt.append("Cliente " + cliente.getNombreCliente() + " se ha desconectado.\n");
+    }
+
     private void enviarListaClientesATodos() {
         StringBuilder lista = new StringBuilder("Lista de clientes:");
         synchronized (listaClientes) {
@@ -108,24 +134,42 @@ public class AtencionCliente extends Thread {
     }
 
     private void procesarMensaje(String mensaje) {
-        // formato del mensaje para un cliente específico es "@nombreCliente: mensaje"
         if (mensaje.startsWith("@")) {
-            int separatorIndex = mensaje.indexOf(':');
-            if (separatorIndex != -1) {
-                String destinatario = mensaje.substring(1, separatorIndex).trim();
-                String contenidoMensaje = mensaje.substring(separatorIndex + 1).trim();
-
-                AtencionCliente clienteDestino = buscarClientePorNombre(destinatario);
-                if (clienteDestino != null) {
-                    clienteDestino.enviarMensaje("Mensaje de " + this.nombreCliente + ": " + contenidoMensaje);
-                } else {
-                    enviarMensaje("Cliente " + destinatario + " no encontrado.");
-                }
-            } else {
-                enviarMensaje("Formato de mensaje incorrecto. Usa '@nombreCliente: mensaje'.");
-            }
+            procesarMensajePrivado(mensaje);
         } else {
             enviarATodos(mensaje);
+        }
+    }
+
+    private void procesarMensajeDeArchivo(String mensaje) {
+        String[] partes = mensaje.split("@");
+        if (partes.length == 2) {
+            String infoArchivo = partes[0];
+            String destinatario = partes[1].trim();
+
+            AtencionCliente clienteDestino = buscarClientePorNombre(destinatario);
+            if (clienteDestino != null) {
+                recibirArchivo(mensaje, clienteDestino);
+            } else {
+                enviarMensaje("Cliente " + destinatario + " no encontrado.");
+            }
+        }
+    }
+
+    private void procesarMensajePrivado(String mensaje) {
+        int separatorIndex = mensaje.indexOf(':');
+        if (separatorIndex != -1) {
+            String destinatario = mensaje.substring(1, separatorIndex).trim();
+            String contenidoMensaje = mensaje.substring(separatorIndex + 1).trim();
+
+            AtencionCliente clienteDestino = buscarClientePorNombre(destinatario);
+            if (clienteDestino != null) {
+                clienteDestino.enviarMensaje("Mensaje de " + this.nombreCliente + ": " + contenidoMensaje);
+            } else {
+                enviarMensaje("Cliente " + destinatario + " no encontrado.");
+            }
+        } else {
+            enviarMensaje("Formato de mensaje incorrecto. Usa '@nombreCliente: mensaje'.");
         }
     }
 
@@ -139,4 +183,43 @@ public class AtencionCliente extends Thread {
         }
         return null;
     }
+
+    private void recibirArchivo(String mensaje, AtencionCliente clienteDestino) {
+        try {
+            // Extraer el nombre del archivo del mensaje
+            String nombreArchivo = mensaje.substring(6); // Ajusta el índice según tu formato
+            clienteDestino.enviarMensaje("Archivo recibido de " + this.nombreCliente);
+
+            // Mostrar un mensaje en el cliente destino
+            int opcion = JOptionPane.showConfirmDialog(null, "Has recibido un archivo del cliente " + this.nombreCliente + ": " + nombreArchivo + ". ¿Deseas descargarlo?", "Archivo Recibido", JOptionPane.YES_NO_OPTION);
+            if (opcion == JOptionPane.YES_OPTION) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setSelectedFile(new File(nombreArchivo));
+                int seleccion = fileChooser.showSaveDialog(null);
+
+                if (seleccion == JFileChooser.APPROVE_OPTION) {
+                    File archivoDestino = fileChooser.getSelectedFile();
+                    guardarArchivo(archivoDestino, clienteDestino);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void guardarArchivo(File archivoDestino, AtencionCliente clienteDestino) {
+        try (InputStream in = clienteDestino.clientSocket.getInputStream(); FileOutputStream fos = new FileOutputStream(archivoDestino)) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = in.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+            fos.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al guardar el archivo: " + e.getMessage());
+        }
+    }
+
 }
